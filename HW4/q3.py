@@ -1,0 +1,55 @@
+import random
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
+from scipy.stats import multivariate_normal
+
+def generate_data(mean, covariance,n):
+	data_gen = []
+	x = np.linspace(-10,10,n)
+	y = np.linspace(-10,10,n)
+	X,Y = np.meshgrid(x,y)
+	z1 = np.empty(X.shape+(2,))
+	z1[:,:,0] = X
+	z1[:,:,1] = Y
+	rv1 = multivariate_normal(mean,covariance)
+	return X,Y,z1,rv1
+
+n = 1000 #1000 Data samples of each class
+X1,Y1,z1,rv1 = generate_data([1,1],np.array([[3,0],[0,3]]),n)
+X2,Y2,z2,rv2 = generate_data([1,1],np.array([[10,6],[6,10]]),n)
+
+fig = plt.figure()
+ax = fig.add_subplot(311,projection="3d")
+ax.scatter(X1,Y1,np.zeros([n,n]),marker="o",color="r")
+ax.scatter(X2,Y2,np.zeros([n,n]),marker="x",color="b")
+ax.set_title('Plot of x and y')
+ax.set_xlabel("X")
+ax.set_ylabel("Y")
+ax.set_zlabel("Z")
+
+bx = fig.add_subplot(312,projection="3d")
+bx.scatter(X1,np.zeros([n,n]),rv1.pdf(z1),marker="o",color="r")
+bx.scatter(X2,np.zeros([n,n]),rv2.pdf(z2),marker="x",color="b")
+bx.set_title("Plot of x and z.")
+bx.set_xlabel("X")
+bx.set_ylabel("Y")
+bx.set_zlabel("Z")
+
+cx = fig.add_subplot(313,projection="3d")
+cx.scatter(np.zeros([n,n]),Y1,rv1.pdf(z1),marker="o",color="r")
+cx.scatter(np.zeros([n,n]),Y2,rv2.pdf(z2),marker="x",color="b")
+cx.set_title("Plot of y and z.")
+cx.set_xlabel("X")
+cx.set_ylabel("Y")
+cx.set_zlabel("Z")
+
+fig1 = plt.figure()
+dx = plt.axes(projection="3d")
+dx.scatter3D(X1,Y1,rv1.pdf(z1),color="r",marker="o")
+dx.scatter3D(X2,Y2,rv2.pdf(z2),color="b",marker="x")
+dx.set_xlabel("X")
+dx.set_ylabel("Y")
+dx.set_zlabel("Z")
+
+plt.show()
